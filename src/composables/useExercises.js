@@ -1,9 +1,10 @@
-import { ref } from 'vue'
+import { useLocalStorage } from './useLocalStorage.js'
 
 // Modul-nivå: skapas en gång, delas av alla komponenter som anropar useExercises()
-const exercises = ref([])
+const exercises = useLocalStorage('rehab-exercises', [])
 
-let nextId = 1
+let nextId =
+  exercises.value.length === 0 ? 1 : Math.max(...exercises.value.map((exercise) => exercise.id)) + 1
 
 function addExercise({ name, sets, reps, note }) {
   exercises.value.push({
