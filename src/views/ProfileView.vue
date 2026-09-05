@@ -36,4 +36,9 @@ const { profile, isProfileComplete } = useProfile()
 </template>
 
 <style scoped>
+form { display: flex;
+  flex-direction: column;
+  gap: var(--space-3); }
+
+label { display: flex; flex-direction: column; gap: var(--space-1); }
 </style>

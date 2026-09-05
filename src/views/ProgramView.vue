@@ -58,18 +58,20 @@ function handleAddExercise() {
 
       <ul v-else>
         <li v-for="exercise in exercises" :key="exercise.id">
-          <RouterLink :to="{ name: 'exercise-detail', params: { id: exercise.id } }">
-            {{ exercise.name }}
-          </RouterLink>
-          ({{ exercise.sets }}x{{ exercise.reps }})
+          <div>
+            <RouterLink :to="{ name: 'exercise-detail', params: { id: exercise.id } }">
+              {{ exercise.name }}
+            </RouterLink>
+            ({{ exercise.sets }}x{{ exercise.reps }})
+            <span v-if="exercise.done">✓ Klar</span>
+          </div>
 
-          <span v-if="exercise.done">✓ Klar</span>
-
-          <button type="button" @click="toggleDone(exercise.id)">
-            {{ exercise.done ? 'Ångra' : 'Markera klar' }}
-          </button>
-
-          <button type="button" @click="removeExercise(exercise.id)">Ta bort</button>
+          <div>
+            <button type="button" @click="toggleDone(exercise.id)">
+              {{ exercise.done ? 'Ångra' : 'Markera klar' }}
+            </button>
+            <button type="button" @click="removeExercise(exercise.id)">Ta bort</button>
+          </div>
         </li>
       </ul>
     </section>
@@ -77,4 +79,26 @@ function handleAddExercise() {
 </template>
 
 <style scoped>
+form { display: flex;
+  flex-direction: column;
+  gap: var(--space-3); }
+
+label { display: flex; flex-direction: column; gap: var(--space-1); }
+
+ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
+
+li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: var(--space-3);
+  background-color: var(--color-primary-light);
+  padding: var(--space-3);
+  border-radius: var(--radius);
+}
+
+li > div:last-child {
+  display: flex;
+  gap: var(--space-2);
+}
 </style>
