@@ -6,15 +6,24 @@ const exercises = useLocalStorage('rehab-exercises', [])
 let nextId =
   exercises.value.length === 0 ? 1 : Math.max(...exercises.value.map((exercise) => exercise.id)) + 1
 
-function addExercise({ name, sets, reps, note }) {
+function addExercise({ name, sets, reps, note, category }) {
   exercises.value.push({
     id: nextId++,
     name,
     sets,
     reps,
     note,
+    category,
     done: false,
+    effort: null,
   })
+}
+
+function updateExercise(id, updates) {
+  const exercise = exercises.value.find((exercise) => exercise.id === id)
+  if (exercise) {
+    Object.assign(exercise, updates)
+  }
 }
 
 function removeExercise(id) {
@@ -36,6 +45,7 @@ export function useExercises() {
   return {
     exercises,
     addExercise,
+    updateExercise,
     removeExercise,
     toggleDone,
     getExerciseById,
