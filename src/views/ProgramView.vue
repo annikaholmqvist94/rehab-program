@@ -1,16 +1,52 @@
 <script setup>
-import { reactive } from 'vue'
+import { reactive, ref } from 'vue'
 import { useExercises } from '../composables/useExercises.js'
 import { useProfile } from '../composables/useProfile.js'
+import { exerciseCategories, effortLevels, getCategory } from '../constants/exerciseCategories.js'
 
-const { exercises, addExercise, removeExercise, toggleDone } = useExercises()
+const { exercises, addExercise, updateExercise, removeExercise, toggleDone } = useExercises()
 const { isProfileComplete } = useProfile()
 
-const newExercise = reactive({ name: '', sets: null, reps: null, note: '' })
+function emptyForm() {
+  return { name: '', sets: null, reps: null, note: '', category: exerciseCategories[0].value }
+}
 
-function handleAddExercise() {
-  addExercise(newExercise)
-  Object.assign(newExercise, { name: '', sets: null, reps: null, note: '' })
+const newExercise = reactive(emptyForm())
+const editingId = ref(null)
+
+function handleSubmit() {
+  if (editingId.value === null) {
+    addExercise(newExercise)
+  } else {
+    updateExercise(editingId.value, newExercise)
+    editingId.value = null
+  }
+  Object.assign(newExercise, emptyForm())
+}
+
+function startEdit(exercise) {
+  editingId.value = exercise.id
+  Object.assign(newExercise, {
+    name: exercise.name,
+    sets: exercise.sets,
+    reps: exercise.reps,
+    note: exercise.note,
+    category: exercise.category,
+  })
+}
+
+function cancelEdit() {
+  editingId.value = null
+  Object.assign(newExercise, emptyForm())
+}
+
+function confirmRemove(id) {
+  if (confirm('Ta bort övningen? Det går inte att ångra.')) {
+    if (editingId.value === id) {
+      cancelEdit()
+    }
+    removeExercise(id)
+  }
 }
 </script>
 
@@ -25,11 +61,20 @@ function handleAddExercise() {
 
   <template v-else>
     <section>
-      <h2>Lägg till övning</h2>
-      <form @submit.prevent="handleAddExercise">
+      <h2>{{ editingId === null ? 'Lägg till övning' : 'Redigera övning' }}</h2>
+      <form @submit.prevent="handleSubmit">
         <label>
           Övning
           <input v-model="newExercise.name" type="text" required />
+        </label>
+
+        <label>
+          Kategori
+          <select v-model="newExercise.category">
+            <option v-for="category in exerciseCategories" :key="category.value" :value="category.value">
+              {{ category.icon }} {{ category.label }}
+            </option>
+          </select>
         </label>
 
         <label>
@@ -47,7 +92,10 @@ function handleAddExercise() {
           <input v-model="newExercise.note" type="text" placeholder="valfritt" />
         </label>
 
-        <button type="submit">Lägg till övning</button>
+        <div>
+          <button type="submit">{{ editingId === null ? 'Lägg till övning' : 'Spara ändringar' }}</button>
+          <button v-if="editingId !== null" type="button" @click="cancelEdit">Avbryt</button>
+        </div>
       </form>
     </section>
 
@@ -59,18 +107,30 @@ function handleAddExercise() {
       <ul v-else>
         <li v-for="exercise in exercises" :key="exercise.id">
           <div>
+            <span>{{ getCategory(exercise.category)?.icon }}</span>
             <RouterLink :to="{ name: 'exercise-detail', params: { id: exercise.id } }">
               {{ exercise.name }}
             </RouterLink>
             ({{ exercise.sets }}x{{ exercise.reps }})
             <span v-if="exercise.done">✓ Klar</span>
+
+            <label v-if="exercise.done">
+              Ansträngning
+              <select v-model="exercise.effort">
+                <option :value="null" disabled>Välj...</option>
+                <option v-for="level in effortLevels" :key="level.value" :value="level.value">
+                  {{ level.label }}
+                </option>
+              </select>
+            </label>
           </div>
 
           <div>
             <button type="button" @click="toggleDone(exercise.id)">
               {{ exercise.done ? 'Ångra' : 'Markera klar' }}
             </button>
-            <button type="button" @click="removeExercise(exercise.id)">Ta bort</button>
+            <button type="button" @click="startEdit(exercise)">Redigera</button>
+            <button type="button" @click="confirmRemove(exercise.id)">Ta bort</button>
           </div>
         </li>
       </ul>
@@ -84,6 +144,11 @@ form { display: flex;
   gap: var(--space-3); }
 
 label { display: flex; flex-direction: column; gap: var(--space-1); }
+
+form > div {
+  display: flex;
+  gap: var(--space-2);
+}
 
 ul { list-style: none; display: flex; flex-direction: column; gap: var(--space-2); }
 
