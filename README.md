@@ -1,38 +1,46 @@
-# rehab-program
+# Rehab Program
 
-This template should help get you started developing with Vue 3 in Vite.
+En liten Vue 3-app för att hålla koll på ett rehabprogram – lägg till övningar, kategorisera dem (ben, rygg, axel/arm, core, rörlighet), logga ansträngningsnivå och följ framstegen. Allt sparas lokalt i webbläsaren via `localStorage`.
 
-## Recommended IDE Setup
+Byggd med [Vue 3](https://vuejs.org/) och [Vite](https://vite.dev/).
 
-[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+## Funktioner
 
-## Recommended Browser Setup
+- Startsida med progressöversikt, kategorifördelning och genomsnittlig ansträngning
+- Programvy för att lägga till, redigera och kategorisera övningar
+- Detaljvy per övning med ansträngningsnivå och borttagning
+- Profilsida
+- Data sparas i `localStorage` – inget konto eller backend krävs
 
-- Chromium-based browsers (Chrome, Edge, Brave, etc.):
-  - [Vue.js devtools](https://chromewebstore.google.com/detail/vuejs-devtools/nhdogjmejiglipccpnnnanhbledajbpd)
-  - [Turn on Custom Object Formatter in Chrome DevTools](http://bit.ly/object-formatters)
-- Firefox:
-  - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
-  - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
+## Kom igång
 
 ```sh
 npm install
-```
-
-### Compile and Hot-Reload for Development
-
-```sh
 npm run dev
 ```
 
-### Compile and Minify for Production
+Appen körs då på `http://localhost:5173`.
+
+### Bygg för produktion
 
 ```sh
 npm run build
 ```
+
+Bygget läggs i `dist/` och driftsätts automatiskt till GitHub Pages via `.github/workflows/deploy.yml` vid push till `main`.
+
+### Förhandsgranska produktionsbygget lokalt
+
+```sh
+npm run preview
+```
+
+## Tech stack
+
+- [Vue 3](https://vuejs.org/) (Composition API)
+- [Vue Router](https://router.vuejs.org/)
+- [Vite](https://vite.dev/)
+
+## Rekommenderad IDE-setup
+
+[VS Code](https://code.visualstudio.com/) + [Vue (Official)](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (inaktivera Vetur om det är installerat).
